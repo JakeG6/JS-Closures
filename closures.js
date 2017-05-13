@@ -15,10 +15,12 @@ closure over the name variable. Invoke outer saving the return value into
 another variable called 'inner'. */
 
 // Code Here
+var inner = outer();
 
 //Once you do that, invoke inner.
 
 //Code Here
+inner();
 
 
 
@@ -43,10 +45,15 @@ function callFriend(name) {
 
 /****** INSTRUCTIONS PROBLEM 2 ******/
 /* Above you're given a callFriend function that returns the dial function.
-Create a callJake function that when invoked with '435-555-9248' returns 'Calling Jake at 435-555-9248'
+Create a callJake function that when invoked with '435-555-9248' returns
+'Calling Jake at 435-555-9248'
 in your console. */
 
   //Code Here
+
+var callJake = callFriend('Jake');
+callJake('435-555-9248');
+
 
 
 
@@ -65,13 +72,21 @@ in your console. */
 properly. */
 
 //Code Here
+function makeCounter() {
+  var num = 0;
+    return function() {
+       num++;
+      console.log(num);
+      return num;
+    }
+}
 
-//Uncomment this once you make your function
-//   var count = makeCounter();
-//   count(); // 1
-//   count(); // 2
-//   count(); // 3
-//   count(); // 4
+
+var count = makeCounter();
+count(); // 1
+count(); // 2
+count(); // 3
+count(); // 4
 
 
 
@@ -91,8 +106,8 @@ properly. */
 up/down counter. The first function is called inc, this function is responsible
 for incrementing the value once. The second function is called dec, this
 function is responsible for decrementing the value by one. You will need to use
-the module pattern to achieve this. 
-Information on the module pattern available here: 
+the module pattern to achieve this.
+Information on the module pattern available here:
 http://stackoverflow.com/questions/17776940/javascript-module-pattern-with-example?answertab=votes#tab-top
 */
 
@@ -100,8 +115,12 @@ function counterFactory(value) {
 
   // Code here.
 
+  var count = value;
+
 
   return {
+    inc: function() {count++; return count;},
+    dec: function() {count--; return count;}
   }
 }
 
@@ -134,10 +153,11 @@ function motivation(firstname, lastname) {
   var welcomeText = 'You\'re doing awesome, keep it up ';
 
   // code message function here.
+  function message() {return welcomeText + firstname + " " + lastname + ".";}
 
 
   //Uncommment this to return the value of your invoked message function
-  //return message();
+  return message();
 
 }
 
@@ -176,9 +196,13 @@ var module = (function() {
   // outside our lexical scope
   return {
     // Code here.
+    publicMethod: function() { return privateMethod();}
   };
 
 })();
+
+//when publicMethod invoked private method, it console logged undefined, but but when I added "return" to the publicMethod
+//function definition, it recognized that. Why is this?
 
 
 
@@ -195,7 +219,15 @@ var secondLevelFriends = ["Anne", "Harry", "Quinton"];
 var allUsers = ["Tom", "Dick", "Harry", "Anne", "Quinton", "Katie", "Mary"];
 
 function findPotentialFriends(existingFriends) {
-
+  return function(user) {
+    var result = true;
+    for (var i = 0; i < existingFriends.length; i++) {
+      if (user === existingFriends[i]) {
+        result = false;
+      }
+    }
+    return result;
+  }
 }
 
 var isNotAFriend = findPotentialFriends( friends );
@@ -210,8 +242,8 @@ var isNotAFriend = findPotentialFriends( friends );
 method, find all potential second level friends as well as potential friends
 from allUsers. */
 
-var potentialSecondLevelFriends = "?";
-var allPotentialFriends = "?";
+var potentialSecondLevelFriends = secondLevelFriends.filter(isNotAFriend);
+var allPotentialFriends = allUsers.filter(isNotAFriend);
 
 
 /******************************************************************************\
@@ -236,9 +268,11 @@ to 5. What we need to do is console.log(i) so that it logs like so:
 
 function timeOutCounter() {
   for (var i = 0; i <= 5; i++) {
-    setTimeout(function() {
-    	console.log(i)
-	}, i * 1000)
+    (function(j) {
+      setTimeout(function() {
+        console.log(j)
+      }, j * 1000)
+    })(i)
   }
 }
 timeOutCounter();
